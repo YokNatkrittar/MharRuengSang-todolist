@@ -1,0 +1,46 @@
+C4Component
+    title System Context diagram for ICT To Do List - Web API Components
+
+    Person(student, "Student", "Uses task management system")
+    Person(instructor, "Instructor", "Uses task management system")
+    Person(admin, "System Administrator", "Manages system configuration")
+
+    Container(web_app, "Web Application", "React SPA", "User interface")
+    Container(mobile_app, "Mobile Application", "Flutter", "Mobile interface")
+    ContainerDb(database, "PostgreSQL Database", "Data storage")
+    System_Ext(mycourses, "MyCourses", "External e-learning system")
+
+    Container_Boundary(web_api, "Web API") {
+        Component(auth, "Authentication & Authorization", "Python Module", "Handles login, token validation, and access control")
+        Component(task_mgmt, "Task Management", "Python Module", "Handles CRUD operations for manual and imported tasks")
+        Component(sync_orch, "Sync Orchestrator", "Python Module", "Manages sync workflow and coordinates external service calls")
+        Component(mycourses_client, "MyCourses Client", "Python Module", "Calls MyCourses web services and parses JSON responses")
+        Component(mapping, "Mapping", "Python Module", "Converts MyCourses data into internal task model")
+        Component(sync_history, "Sync History", "Python Module", "Records sync outcomes for admin monitoring")
+        Component(data_access, "Data Access", "Python Module", "Provides database operations and transaction management")
+
+        Rel(auth, data_access, "Uses")
+        Rel(task_mgmt, auth, "Uses")
+        Rel(task_mgmt, data_access, "Uses")
+        Rel(sync_orch, task_mgmt, "Calls")
+        Rel(sync_orch, mycourses_client, "Calls")
+        Rel(sync_orch, mapping, "Calls")
+        Rel(sync_orch, sync_history, "Calls")
+        Rel(mycourses_client, mycourses, "Calls", "HTTPS/JSON")
+        Rel(mapping, data_access, "Uses")
+        Rel(sync_history, data_access, "Uses")
+        Rel(data_access, database, "Reads/Writes", "SQL")
+    }
+
+    Rel(web_app, auth, "Authenticates", "REST/JSON/HTTPS")
+    Rel(web_app, task_mgmt, "Manages tasks", "REST/JSON/HTTPS")
+    Rel(web_app, sync_orch, "Initiates sync", "REST/JSON/HTTPS")
+    
+    Rel(mobile_app, auth, "Authenticates", "REST/JSON/HTTPS")
+    Rel(mobile_app, task_mgmt, "Manages tasks", "REST/JSON/HTTPS")
+    Rel(mobile_app, sync_orch, "Initiates sync", "REST/JSON/HTTPS")
+
+    Rel(admin, auth, "Manages users", "REST/JSON/HTTPS")
+    Rel(admin, sync_history, "Views sync health", "REST/JSON/HTTPS")
+
+    UpdateLayoutConfig($c4ShapeInRow="2")

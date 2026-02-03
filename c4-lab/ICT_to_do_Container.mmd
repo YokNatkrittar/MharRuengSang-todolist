@@ -1,0 +1,29 @@
+C4Container
+    title System Context diagram for ICT To Do List - Containers
+
+    Person(student, "Student", "Manages personal tasks and tracks course work")
+    Person(instructor, "Instructor", "Views teaching-related tasks and assignment deadlines")
+    Person(admin, "System Administrator", "Manages system configuration and monitors sync health")
+
+    System_Ext(mycourses, "MyCourses", "External e-learning system with course and assignment data")
+
+    Container_Boundary(ict_todolist, "ICT To Do List") {
+        Container(web_app, "Web Application", "React SPA", "Provides task management interface accessible via web browser")
+        Container(mobile_app, "Mobile Application", "Flutter", "Provides task management for iOS and Android devices")
+        Container(web_api, "Web API", "Python FastAPI", "Provides REST endpoints for task CRUD, sync operations, and authentication")
+        ContainerDb(database, "Database", "PostgreSQL", "Stores user profiles, tasks, sync settings, and sync history")
+        Container(mycourses_connector, "MyCourses Connector", "Python Service", "Integrates with MyCourses to retrieve assignments and submission status")
+    }
+
+    Rel(student, web_app, "Uses", "HTTPS")
+    Rel(student, mobile_app, "Uses", "HTTPS")
+    Rel(instructor, web_app, "Uses", "HTTPS")
+    Rel(admin, web_app, "Uses", "HTTPS")
+
+    Rel(web_app, web_api, "Calls", "REST/JSON/HTTPS")
+    Rel(mobile_app, web_api, "Calls", "REST/JSON/HTTPS")
+    Rel(web_api, database, "Reads/Writes", "SQL/ORM")
+    Rel(web_api, mycourses_connector, "Calls", "Internal")
+    Rel(mycourses_connector, mycourses, "Syncs", "HTTPS/JSON")
+
+    UpdateLayoutConfig($c4ShapeInRow="2")
